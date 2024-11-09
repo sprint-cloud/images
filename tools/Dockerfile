@@ -1,6 +1,6 @@
 FROM alpine:latest
 USER root
-RUN apk add gpg gpg-agent curl
+RUN apk add --no-cache gpg gpg-agent curl
 RUN mkdir -p /downloads/bin && chown -R 1000:1000 /downloads
 
 COPY --from=composer/composer /usr/bin/composer /downloads/bin/composer
