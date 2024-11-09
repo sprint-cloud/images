@@ -26,3 +26,5 @@ jobs:
         env:
           WERF_REPO: ghcr.io/${{ github.repository }}
           GITHUB_TOKEN: ${{ github.token }}
+      - name: Cleanup
+        uses: werf/actions/cleanup@v2
