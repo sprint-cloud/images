@@ -22,7 +22,7 @@ jobs:
       - name: Build images
         run: |
           . $(werf ci-env github --as-file)
-          werf build --add-custom-tag=%image%-latest
+          werf build --add-custom-tag=%image_safe_slug%-latest
         env:
           WERF_REPO: ghcr.io/${{ github.repository }}
           GITHUB_TOKEN: ${{ github.token }}
