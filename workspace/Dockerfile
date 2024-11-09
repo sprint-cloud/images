@@ -5,7 +5,7 @@ ARG USER=sprinter
 ARG TOOLS=
 
 # Install packages
-RUN apk add \
+RUN apk add --no-cache \
         zsh \
         git \
         vim \

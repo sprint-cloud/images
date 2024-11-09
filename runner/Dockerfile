@@ -1,7 +1,10 @@
 FROM alpine:latest
 
 RUN adduser -D runner
-RUN apk add git curl
+RUN apk add --no-cache \ 
+        git \
+        curl
+
 COPY --from=ghcr.io/sprint-cloud/images:tools-latest /downloads/bin/* /usr/local/bin/
 RUN mkdir /workspace && chown -R runner:runner /workspace
 USER runner
