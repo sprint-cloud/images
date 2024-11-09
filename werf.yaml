@@ -8,3 +8,7 @@ context: tools
 image: runner
 dockerfile: Dockerfile
 context: runner
+---
+image: workspace
+dockerfile: Dockerfile
+context: workspace
