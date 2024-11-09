@@ -1,11 +1,11 @@
-name: Create App Release
+name: Build base images
 
 on:
   push:
     branches: ['main']
 
 jobs:
-  build-and-publish-release:
+  build-images:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,17 +17,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
       - name: Install werf
         uses: werf/actions/install@v2
-      
-      - name: Publish Release
+      - name: Build images
         run: |
           . $(werf ci-env github --as-file)
-
-          werf build
-          werf bundle publish --tag 0.0.${{github.run_id}}
+          werf build --add-custom-tag=%image%-latest
         env:
           WERF_REPO: ghcr.io/${{ github.repository }}
-          WERF_ENV: production
           GITHUB_TOKEN: ${{ github.token }}
