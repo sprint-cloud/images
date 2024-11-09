@@ -29,6 +29,6 @@ RUN mkdir /template && chown -R ${USER}:${USER} /template
 USER sprinter
 COPY home/* ${HOME}
 RUN curl -L git.io/antigen > ${HOME} && \
-    /bin/zsh -c 'source ${HOME}/.zshrc'
+    /bin/zsh -c "source ${HOME}/.zshrc"
 RUN rsync -ar ${HOME} /template
 RUN rm -rf ${HOME}/*
