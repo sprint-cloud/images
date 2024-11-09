@@ -1,0 +1,10 @@
+FROM alpine:latest
+
+RUN adduser -D runner
+RUN apk add git curl
+COPY --from=ghcr.io/sprint-cloud/images:tools-latest /downloads/bin/* /usr/local/bin/
+RUN mkdir /workspace && chown -R runner:runner /workspace
+USER runner
+WORKDIR /workspace
+RUN git config --global user.name 'Hub Runner' && \
+    git config --global user.email 'noreply@sprintub.nl'

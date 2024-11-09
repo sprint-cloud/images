@@ -1,0 +1,10 @@
+project: images
+configVersion: 1
+---
+image: tools
+dockerfile: Dockerfile
+context: tools
+---
+image: runner
+dockerfile: Dockerfile
+context: runner
