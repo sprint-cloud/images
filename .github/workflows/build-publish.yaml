@@ -3,7 +3,8 @@ name: Build base images
 on:
   push:
     branches: ['main']
-
+  workflow_dispatch:
+  
 jobs:
   build-images:
     runs-on: ubuntu-latest
