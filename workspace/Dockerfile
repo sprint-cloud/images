@@ -8,6 +8,7 @@ ARG TOOLS=
 RUN apk add --no-cache \
         curl \
         rsync \
+        bash \
         zsh \
         git \
         vim \
