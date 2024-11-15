@@ -2,7 +2,6 @@ FROM alpine:latest
 LABEL org.opencontainers.image.source https://github.com/sprint-cloud/images
 ARG HOME=/workspace
 ARG USER=sprinter
-ARG TOOLS=
 
 # Install packages
 RUN apk add --no-cache \
