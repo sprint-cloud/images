@@ -22,7 +22,7 @@ RUN apk add --no-cache \
         go \
         dotnet8-sdk
 
-COPY --from=ghcr.io/sprint-cloud/images:tools-latest /downloads/bin/* /usr/local/bin/
+COPY --from=ghcr.io/sprint-cloud/tools:latest /downloads/bin/* /usr/local/bin/
 
 RUN adduser -D ${USER} -s /bin/zsh -h ${HOME}
 
