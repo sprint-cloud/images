@@ -1,4 +1,6 @@
 FROM alpine:latest
+LABEL org.opencontainers.image.source https://github.com/sprint-cloud/images
+
 USER root
 RUN apk add --no-cache gpg gpg-agent curl
 RUN mkdir -p /downloads/bin && chown -R 1000:1000 /downloads

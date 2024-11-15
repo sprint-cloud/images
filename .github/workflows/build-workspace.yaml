@@ -1,16 +1,16 @@
-name: Build Hub tools
+name: Build Hub Workspace
 
 on:
   push:
     branches: ['main']
     paths:
-    - tools/*
+    - workspace/*
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: ghcr.io/sprint-cloud/tools
+  IMAGE_NAME: ghcr.io/sprint-cloud/workspace
   IMAGE_TAG: ${{ github.sha }}
-  IMAGE_CONTEXT: tools
+  IMAGE_CONTEXT: workspace
   DOCKER_BUILDKIT: 1
   
 jobs:
