@@ -13,6 +13,7 @@ ARG ACT=0.2.69
 ARG KUBECTL=1.31.2
 ARG ARGO_CLI=3.5.12
 ARG ARGO_CD=2.13.0
+ARG KIND=0.25
 
 RUN adduser -D tools -h /downloads
 USER tools
@@ -54,3 +55,7 @@ RUN curl -sLO "https://github.com/argoproj/argo-workflows/releases/download/v${A
 RUN curl -sLO "https://github.com/argoproj/argo-workflows/releases/download/v${ARGO_CD}/argocd-linux-amd64" && \
     curl -sLO "https://github.com/argoproj/argo-workflows/releases/download/v${ARGO_CD}/cli-checksums.txt" && \
     find . -type f -exec sha256sum {} \; >> cli-checksums.txt && install -m 0755 argocd-linux-amd64 /downloads/bin/argocd
+
+RUN curl -sLO "https://github.com/kubernetes-sigs/kind/releases/download/v${KIND}/kind-linux-amd64" && \
+    curl -sLo "https://github.com/kubernetes-sigs/kind/releases/download/v${KIND}/kind-linux-amd64.sha256sum" && \
+    find . -type f -exec sha256sum {} \; >> kind-linux-amd64.sha256sum && install -m 0755 kind-linux-amd64 /downloads/bin/kind
