@@ -18,7 +18,8 @@ class HubApp(BaseModel):
     name: str
     owner: str
     chart: HubChart
-    namespace: str = Field(default='argocd') 
+    namespace: str = Field(default='argocd')
+    image: str = Field(default=None) 
 
     @computed_field
     @property
