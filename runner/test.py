@@ -1,10 +1,11 @@
 import os
-from hub import deployment, create_dir
+from hub.tools import create_dir
+from hub.deployment import HubChart, HubApp
 
-chart = deployment.HubChart(name='test', 
+chart = HubChart(name='test', 
                  version='0.1')
 
-app = deployment.HubApp(name='TestApp', 
+app = HubApp(name='TestApp', 
              owner='admin', 
              chart=chart)
 
