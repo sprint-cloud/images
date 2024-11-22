@@ -9,7 +9,7 @@ app = HubApp(name='TestApp',
              owner='admin', 
              chart=chart)
 
-outdir = create_dir('out')
+outdir = create_dir(path='out')
 
 out = os.path.join(outdir, 'app.yaml')
 with open(out, "w") as f:
