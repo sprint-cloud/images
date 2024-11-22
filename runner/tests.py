@@ -13,18 +13,16 @@ app = HubApp(name='TestApp',
              chart=chart)
 
 class TestCreateDir(unittest.TestCase):
-    PATH = "/tmp/test_{}".format(time.time())
 
-    def test_create_dir(self):
-        path = tools.create_dir(self.PATH, may_excist=False)
-        assert os.path.isdir(self.PATH)
+    def setUp(self):
+        self.path = tools.create_temp_dir()
     
     def test_create_may_excist(self):
-        assert tools.create_dir(self.PATH, may_excist=True)
+        assert tools.create_dir(self.path, may_excist=True)
 
     def test_create_may_not_excist(self):
         try:
-            tools.create_dir(self.PATH, may_excist=False)
+            tools.create_dir(self.path, may_excist=False)
         except FileExistsError:
             return
         assert False
