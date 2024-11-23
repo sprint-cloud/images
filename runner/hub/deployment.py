@@ -4,9 +4,9 @@ from jinja2 import Environment, FileSystemLoader
 
 TEMPLATEDIR = os.getenv('HUBTEMPLATEDIR')
 if TEMPLATEDIR is None:
-    TEMPLATEDIR = 'templates'
+    TEMPLATEDIR = './templates'
 
-env = Environment(loader = FileSystemLoader('./templates'),   trim_blocks=True, lstrip_blocks=True)
+env = Environment(loader = FileSystemLoader(TEMPLATEDIR),   trim_blocks=True, lstrip_blocks=True)
 
 class HubChart(BaseModel):
     name: str
