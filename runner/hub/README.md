@@ -1,3 +1,8 @@
+# Sprint Hub Tools
+
+## Deployments
+
+``` python
 import os
 from hub.tools import create_dir
 from hub.deployment import HubChart, HubApp
@@ -18,3 +23,4 @@ with open(out, "w") as f:
 out = os.path.join(outdir, 'namespace.yaml')
 with open(out, "w") as f:
     f.write(app.namespace_manifest())
+```
