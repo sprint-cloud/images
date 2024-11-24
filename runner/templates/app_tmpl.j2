@@ -13,7 +13,7 @@ spec:
     targetRevision: "{{ chart.version }}"
     helm:
       valuesObject:
-        {{ chart.values }}
+        {{ chart.values | indent(8) }}
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ appns }}

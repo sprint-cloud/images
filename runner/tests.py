@@ -26,7 +26,9 @@ class TestDeployment(unittest.TestCase):
 
     def setUp(self):
         chart = HubChart(name='test', 
-                 version='0.1')
+                 version='0.1',
+                 values="""app: name\ningress: test"""
+                 )
 
         self.app = HubApp(name='TestApp', 
                     owner='admin', 
