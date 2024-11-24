@@ -13,16 +13,7 @@ spec:
     targetRevision: "{{ chart.version }}"
     helm:
       valuesObject:
-        ingress:
-          enabled: true
-          hosts:
-          - host: "{{ host }}.app.sprinthub.nl"
-            paths:
-            - path: /
-              pathType: ImplementationSpecific
-          tls:
-          - hosts:
-            - "{{ name }}.app.sprinthub.nl"
+        {{ chart.values }}
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ appns }}

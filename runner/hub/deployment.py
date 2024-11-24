@@ -8,6 +8,7 @@ if TEMPLATEDIR is None:
 
 env = Environment(loader = FileSystemLoader(TEMPLATEDIR),   trim_blocks=True, lstrip_blocks=True)
 
+
 class HubChart(BaseModel):
     name: str
     version: str
