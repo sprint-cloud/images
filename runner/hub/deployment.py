@@ -13,7 +13,7 @@ class HubChart(BaseModel):
     name: str
     version: str
     repo: str = Field(default='ghcr.io/sprint-cloud')
-    values: dict = Field(default_factory=dict)
+    values: str = Field(default=None)
 
 class HubApp(BaseModel):
     name: str
