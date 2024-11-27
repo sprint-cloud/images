@@ -14,6 +14,7 @@ ARG KUBECTL=1.31.2
 ARG ARGO_CLI=3.5.12
 ARG ARGO_CD=2.13.0
 ARG KIND=0.25.0
+ARG KUBESEAL=0.27.2
 
 RUN adduser -D tools -h /downloads
 USER tools
@@ -60,3 +61,8 @@ RUN curl -sLO "https://github.com/argoproj/argo-workflows/releases/download/v${A
 RUN curl -sLO "https://github.com/kubernetes-sigs/kind/releases/download/v${KIND}/kind-linux-amd64" && \
     curl -sLO "https://github.com/kubernetes-sigs/kind/releases/download/v${KIND}/kind-linux-amd64.sha256sum" && \
     find . -type f -exec sha256sum {} \; >> kind-linux-amd64.sha256sum && install -m 0755 kind-linux-amd64 /downloads/bin/kind
+# Install Kubeseal
+RUN curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL}/kubeseal-${KUBESEAL}-linux-amd64.tar.gz" && \
+    curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL}/sealed-secrets_${KUBESEAL}_checksums.txt" && \
+    find . -type f -exec sha256sum {} \; >> sealed-secrets_${KUBESEAL}_checksums.txt && tar -xvzf kubeseal-${KUBESEAL}-linux-amd64.tar.gz kubeseal && \  
+    install -m 755 kubeseal /downloads/bin/kubeseal
