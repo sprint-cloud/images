@@ -126,6 +126,13 @@ def generate_app(appname:str, source:AppSource, user:AppUser):
             spec = spec
         )
 
+def generate_manifest(app:ArgoApp, outdir: str):
+    out = f"{outdir}/app.yaml"
+    with open(out, "w") as f:
+        f.write(yaml.dump(app.model_dump()))
+    return out
+
+
 def read_apps(appdir: str) -> list[ArgoApp]:
     apps: list[ArgoApp] = []
     app_paths = [f.path for f in os.scandir(appdir) if f.is_dir()]

@@ -3,7 +3,7 @@ import time
 import os
 import unittest
 import hub.tools as tools
-from hub.deployment import Helm, HelmValues, AppUser, generate_app_source, generate_app, read_apps
+from hub.deployment import Helm, HelmValues, AppUser, generate_app_source, generate_app, read_apps, generate_manifest
 
 class TestCreateDir(unittest.TestCase):
 
@@ -35,8 +35,7 @@ class TestDeployment(unittest.TestCase):
             values = HelmValues(user=user, domain="app.example.com")
             source = generate_app_source('wordpress', version='0.0.*', values=values)
             app  = generate_app(appname=appname, source=source, user=user)
-            with open(f"{out}/app.yaml", "w") as f:
-                f.write(yaml.dump(app.model_dump()))
+            generate_manifest(app,self.tmpdir)
 
     def test_read_apps(self):
         apps = read_apps(self.tmpdir)
