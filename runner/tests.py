@@ -3,7 +3,7 @@ import time
 import os
 import unittest
 import hub.tools as tools
-from hub.deployment import HubApp, HubChart
+from hub.deployment import Helm, HelmValues, AppUser, generate_app_source, generate_app, read_apps
 
 class TestCreateDir(unittest.TestCase):
 
@@ -25,22 +25,22 @@ class TestCreateDir(unittest.TestCase):
 class TestDeployment(unittest.TestCase):
 
     def setUp(self):
-        chart = HubChart(name='test', 
-                 version='0.1',
-                 values="""app: name\ningress: test"""
-                 )
+        self.tmpdir = tools.create_dir('/tmp/testout')
+   
+    # Todo: update to mock
+    def test_generate_apps(self):
+        for appname in ['my-blog', 'myapi', 'anotherapp']:
+            out = tools.create_dir(f"{self.tmpdir}/{appname}")
+            user = AppUser(email='user@example.com', name='username')
+            values = HelmValues(user=user, domain="app.example.com")
+            source = generate_app_source('wordpress', version='0.0.*', values=values)
+            app  = generate_app(appname=appname, source=source, user=user)
+            with open(f"{out}/app.yaml", "w") as f:
+                f.write(yaml.dump(app.model_dump()))
 
-        self.app = HubApp(name='TestApp', 
-                    owner='admin', 
-                    chart=chart)
-        
-    # Todo improve this test
-    def test_generate_app(self):
-        assert self.app.app_manifest()
-
-    # Todo improve this test
-    def test_generate_ns(self):
-        assert self.app.namespace_manifest()
+    def test_read_apps(self):
+        apps = read_apps(self.tmpdir)
+   
 
 if __name__ == '__main__':
     unittest.main()

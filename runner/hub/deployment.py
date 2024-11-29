@@ -1,4 +1,5 @@
 import yaml, os
+from typing import Optional
 from pydantic import BaseModel, Field, computed_field
 from jinja2 import Environment, FileSystemLoader
 
@@ -8,35 +9,136 @@ if TEMPLATEDIR is None:
 
 env = Environment(loader = FileSystemLoader(TEMPLATEDIR),   trim_blocks=True, lstrip_blocks=True)
 
-
-class HubChart(BaseModel):
+'''
+ apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ name }}
+  namespace: argocd
+  labels:
+     hub/owner: {{ owner }}
+spec:
+  project: apps
+  source:
+    chart: "{{ chart.name }}"
+    repoURL: "{{ chart.repo }}"
+    targetRevision: "{{ chart.version }}"
+    helm:
+      valuesObject:
+        {{ chart.values | indent(8) }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ appns }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true 
+'''
+class Metadata(BaseModel):
     name: str
-    version: str
-    repo: str = Field(default='ghcr.io/sprint-cloud')
-    values: str = Field(default=None)
+    namespace: str
+    labels: dict = None
+    annotations: dict = {}
 
-class HubApp(BaseModel):
+class Manifest(BaseModel):
+    metadata: Metadata
+
+class AppUser(BaseModel):
+    email: str
     name: str
-    owner: str
-    chart: HubChart
-    namespace: str = Field(default='argocd')
-    image: str = Field(default=None) 
 
-    @computed_field
-    @property
-    def appnamespace(self) -> str:
-        return "{}-{}".format('app', self.name.lower())
-    
-    @computed_field
-    @property
-    def domainhost(self) -> str:
-        return self.name.lower()
-    
-    def app_manifest(self) -> str:
-        return env.get_template('app_tmpl.j2').render(self, 
-                                                      appns=self.appnamespace,
-                                                      host=self.domainhost)
-    def namespace_manifest(self) -> str:
-        return env.get_template('namespace_tmpl.j2').render(self, 
-                                                      appns=self.appnamespace)
-    
+class IngressTls(BaseModel):
+    hosts: list[str]
+
+class IngressPath(BaseModel):
+    path: str = "/"
+    pathType: str = "ImplementationSpecific"
+
+class IngressHost(BaseModel):
+    host: str
+    paths: list[IngressPath] = [IngressPath()]
+
+class AppIngress(BaseModel):
+    className: str = "apps"
+    hosts: list[IngressHost] = []
+    tls: Optional[IngressTls]
+        
+def ingress_factory(val):
+    tls = IngressTls(hosts=[val['domain']])
+    host = IngressHost(host=val['domain'])
+    return AppIngress(hosts=[host], tls=tls)
+
+class HelmValues(BaseModel):
+    domain: str
+    user: AppUser
+    ingress: AppIngress = Field(default_factory=ingress_factory)
+
+class Helm(BaseModel):
+    valuesObject: HelmValues
+
+class AppSource(BaseModel):
+    chart: str
+    TargetRevision: str
+    repoUrl: str = 'ghcr.io/sprint-cloud'
+    Helm: Helm
+
+class AppDestination(BaseModel):
+    server: str = 'https://kubernetes.default.svc'
+    namespace: str
+
+class AppSync(BaseModel):
+    prune: bool = True
+    selfHeal: bool = True
+
+class AppSyncPolicy(BaseModel):
+    automated: AppSync = AppSync()
+    syncOptions: list = ['CreateNamespace=true']
+
+class AppSpec(BaseModel):
+    project: str = "apps"
+    source: AppSource
+    destination: AppDestination
+    syncPolicy: AppSyncPolicy = AppSyncPolicy()
+
+class ArgoApp(Manifest):
+    apiVersion: str = 'argoproj.io/v1alpha1'
+    spec: AppSpec
+
+def generate_app_source(chart: str, version: str, values: HelmValues):
+    return AppSource(
+            chart=chart, 
+            TargetRevision=version, 
+            Helm=Helm(valuesObject=values))
+
+def generate_app(appname:str, source:AppSource, user:AppUser):
+    meta = Metadata(name = appname, 
+                    namespace = "argocd",
+                    labels = {
+                        'user': user.name,
+                        'email': user.email
+                        }
+                    )
+    namespace = f"app-{appname}"
+    spec = AppSpec(source=source, 
+                   destination=AppDestination(namespace=namespace))
+    return ArgoApp(
+            metadata =  meta,
+            spec = spec
+        )
+
+def read_apps(appdir: str) -> list[ArgoApp]:
+    apps: list[ArgoApp] = []
+    app_paths = [f.path for f in os.scandir(appdir) if f.is_dir()]
+    for path in app_paths:
+        manifest = f"{path}/app.yaml"
+        if not os.path.exists(manifest):
+            print(f"{manifest} does not exist...")
+            continue
+        with open(f"{path}/app.yaml", "r") as f:
+            print(f"Reading: { manifest }...")
+            data = yaml.safe_load(f.read())
+            apps.append(ArgoApp(**data))
+    return apps 
+
+
+
