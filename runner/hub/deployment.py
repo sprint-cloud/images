@@ -68,10 +68,19 @@ def ingress_factory(val):
     host = IngressHost(host=val['domain'])
     return AppIngress(hosts=[host], tls=tls)
 
+class Resources(BaseModel):
+    cpu: str = '250m'
+    mem: str = '128Mi'
+
+class ResourceValues(BaseModel):
+    requests: Resources = Resources()
+    limits: Resources = Resources()
+
 class HelmValues(BaseModel):
     domain: str
     user: AppUser
     ingress: AppIngress = Field(default_factory=ingress_factory)
+    resources: ResourceValues = ResourceValues()
 
 class Helm(BaseModel):
     valuesObject: HelmValues
