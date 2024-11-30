@@ -1,5 +1,7 @@
-import yaml, os
-from typing import Optional
+import os
+import json, yaml
+from datetime import datetime
+from typing import Optional, Annotated
 from pydantic import BaseModel, Field, computed_field
 from jinja2 import Environment, FileSystemLoader
 
@@ -9,56 +11,51 @@ if TEMPLATEDIR is None:
 
 env = Environment(loader = FileSystemLoader(TEMPLATEDIR),   trim_blocks=True, lstrip_blocks=True)
 
-'''
- apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: {{ name }}
-  namespace: argocd
-  labels:
-     hub/owner: {{ owner }}
-spec:
-  project: apps
-  source:
-    chart: "{{ chart.name }}"
-    repoURL: "{{ chart.repo }}"
-    targetRevision: "{{ chart.version }}"
-    helm:
-      valuesObject:
-        {{ chart.values | indent(8) }}
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: {{ appns }}
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true 
-'''
-class Metadata(BaseModel):
+class HubModel(BaseModel):
+    @classmethod
+    def from_json(cls, data:str):
+        return cls(**json.loads(data))
+    
+    def to_json(self, out:str):
+        with open(out, "w") as f:
+            data = self.model_dump_json()
+            f.write(data)
+        return out
+    
+    def from_yaml(self, path:str):
+        with open(path, "w") as f:
+            return self(**yaml.safe_load(f.read()))
+
+    def to_yaml(self, out: str):
+        with open(out, "w") as f:
+            f.write(yaml.dump(self.model_dump()))
+        return out
+
+class Metadata(HubModel):
     name: str
     namespace: str
     labels: dict = None
     annotations: dict = {}
 
-class Manifest(BaseModel):
+class Manifest(HubModel):
     metadata: Metadata
 
-class AppUser(BaseModel):
+class AppUser(HubModel):
     email: str
     name: str
 
-class IngressTls(BaseModel):
+class IngressTls(HubModel):
     hosts: list[str]
 
-class IngressPath(BaseModel):
+class IngressPath(HubModel):
     path: str = "/"
     pathType: str = "ImplementationSpecific"
 
-class IngressHost(BaseModel):
+class IngressHost(HubModel):
     host: str
     paths: list[IngressPath] = [IngressPath()]
 
-class AppIngress(BaseModel):
+class AppIngress(HubModel):
     className: str = "apps"
     hosts: list[IngressHost] = []
     tls: Optional[IngressTls]
@@ -68,42 +65,42 @@ def ingress_factory(val):
     host = IngressHost(host=val['domain'])
     return AppIngress(hosts=[host], tls=tls)
 
-class Resources(BaseModel):
+class Resources(HubModel):
     cpu: str = '250m'
     mem: str = '128Mi'
 
-class ResourceValues(BaseModel):
+class ResourceValues(HubModel):
     requests: Resources = Resources()
     limits: Resources = Resources()
 
-class HelmValues(BaseModel):
+class HelmValues(HubModel):
     domain: str
     user: AppUser
     ingress: AppIngress = Field(default_factory=ingress_factory)
-    resources: ResourceValues = ResourceValues()
 
-class Helm(BaseModel):
+
+class Helm(HubModel):
     valuesObject: HelmValues
 
-class AppSource(BaseModel):
+class AppSource(HubModel):
     chart: str
     TargetRevision: str
     repoUrl: str = 'ghcr.io/sprint-cloud'
     Helm: Helm
 
-class AppDestination(BaseModel):
+class AppDestination(HubModel):
     server: str = 'https://kubernetes.default.svc'
     namespace: str
 
-class AppSync(BaseModel):
+class AppSync(HubModel):
     prune: bool = True
     selfHeal: bool = True
 
-class AppSyncPolicy(BaseModel):
+class AppSyncPolicy(HubModel):
     automated: AppSync = AppSync()
     syncOptions: list = ['CreateNamespace=true']
 
-class AppSpec(BaseModel):
+class AppSpec(HubModel):
     project: str = "apps"
     source: AppSource
     destination: AppDestination
@@ -112,6 +109,8 @@ class AppSpec(BaseModel):
 class ArgoApp(Manifest):
     apiVersion: str = 'argoproj.io/v1alpha1'
     spec: AppSpec
+
+
 
 def generate_app_source(chart: str, version: str, values: HelmValues):
     return AppSource(
@@ -154,7 +153,4 @@ def read_apps(appdir: str) -> list[ArgoApp]:
             print(f"Reading: { manifest }...")
             data = yaml.safe_load(f.read())
             apps.append(ArgoApp(**data))
-    return apps 
-
-
-
+    return apps

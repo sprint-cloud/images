@@ -5,6 +5,7 @@ import unittest
 import hub.tools as tools
 from hub.deployment import Helm, HelmValues, AppUser, generate_app_source, generate_app, read_apps, generate_manifest
 
+
 class TestCreateDir(unittest.TestCase):
 
     def setUp(self):
@@ -35,10 +36,11 @@ class TestDeployment(unittest.TestCase):
             values = HelmValues(user=user, domain="app.example.com")
             source = generate_app_source('wordpress', version='0.0.*', values=values)
             app  = generate_app(appname=appname, source=source, user=user)
-            generate_manifest(app,self.tmpdir)
+            app.to_yaml(f"{out}/app.yaml")
 
     def test_read_apps(self):
         apps = read_apps(self.tmpdir)
+
    
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 import os, time
+import json
 
 def create_dir(path: str, may_excist = True) -> str:
     try:
@@ -14,3 +15,6 @@ def create_temp_dir(prefix: str = "hub"):
     dirname = "{}_{}".format(prefix, time.time())
     path = os.path.join('/tmp/', dirname)
     return create_dir(path, may_excist=False)
+
+def load_json(data: str):
+    return json.loads(data)
