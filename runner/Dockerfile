@@ -7,6 +7,7 @@ RUN adduser -D runner
 RUN apk add --no-cache \ 
         git \
         curl \
+        openssl \
         python3 \
         py3-pip
 
