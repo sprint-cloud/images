@@ -33,7 +33,7 @@ class HubModel(BaseModel):
 
 class Metadata(HubModel):
     name: str
-    namespace: str
+    namespace: Optional[str] = None
     labels: dict = {}
     annotations: dict = {}
 
@@ -107,10 +107,20 @@ class AppSpec(HubModel):
     destination: AppDestination
     syncPolicy: AppSyncPolicy = AppSyncPolicy()
 
+class Namespace(Manifest):
+    apiVersion: str = 'v1'
+    kind: str = 'Namespace'
+
 class ArgoApp(Manifest):
     apiVersion: str = 'argoproj.io/v1alpha1'
     kind: str = 'Application'
     spec: AppSpec
+
+    def generate_namespace(self):
+        meta = Metadata(
+            name = f"app-{self.metadata.name}"
+        )
+        return Namespace(metadata=meta)
 
 def generate_app_source(chart: str, version: str, values: HelmValues):
     return AppSource(
