@@ -34,7 +34,7 @@ class HubModel(BaseModel):
 class Metadata(HubModel):
     name: str
     namespace: str
-    labels: dict = None
+    labels: dict = {}
     annotations: dict = {}
 
 class Manifest(HubModel):
