@@ -59,10 +59,10 @@ class AppIngress(HubModel):
     enabled: bool = True
     className: str = "apps"
     hosts: list[IngressHost] = []
-    tls: Optional[IngressTls]
+    tls: list[IngressTls]
         
 def ingress_factory(val):
-    tls = IngressTls(hosts=[val['domain']])
+    tls = [IngressTls(hosts=[val['domain']])]
     host = IngressHost(host=val['domain'])
     return AppIngress(hosts=[host], tls=tls)
 
