@@ -86,7 +86,7 @@ class Helm(HubModel):
 class AppSource(HubModel):
     chart: str
     TargetRevision: str
-    repoUrl: str = 'ghcr.io/sprint-cloud'
+    repoURL: str = 'ghcr.io/sprint-cloud'
     Helm: Helm
 
 class AppDestination(HubModel):
