@@ -85,7 +85,7 @@ class Helm(HubModel):
 
 class AppSource(HubModel):
     chart: str
-    TargetRevision: str
+    targetRevision: str
     repoURL: str = 'ghcr.io/sprint-cloud'
     Helm: Helm
 
@@ -115,7 +115,7 @@ class ArgoApp(Manifest):
 def generate_app_source(chart: str, version: str, values: HelmValues):
     return AppSource(
             chart=chart, 
-            TargetRevision=version, 
+            targetRevision=version, 
             Helm=Helm(valuesObject=values))
 
 def generate_app(appname:str, source:AppSource, user:AppUser):
