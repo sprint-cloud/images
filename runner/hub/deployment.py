@@ -77,6 +77,7 @@ class HelmValues(HubModel):
     domain: str
     user: AppUser
     ingress: AppIngress = Field(default_factory=ingress_factory)
+    resources: ResourceValues = ResourceValues()
 
 
 class Helm(HubModel):
@@ -109,8 +110,6 @@ class AppSpec(HubModel):
 class ArgoApp(Manifest):
     apiVersion: str = 'argoproj.io/v1alpha1'
     spec: AppSpec
-
-
 
 def generate_app_source(chart: str, version: str, values: HelmValues):
     return AppSource(
