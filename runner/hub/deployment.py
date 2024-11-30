@@ -99,7 +99,7 @@ class AppSync(HubModel):
 
 class AppSyncPolicy(HubModel):
     automated: AppSync = AppSync()
-    syncOptions: list = ['CreateNamespace=true']
+    syncOptions: list = []
 
 class AppSpec(HubModel):
     project: str = "apps"
