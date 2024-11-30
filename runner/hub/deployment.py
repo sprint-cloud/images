@@ -109,6 +109,7 @@ class AppSpec(HubModel):
 
 class ArgoApp(Manifest):
     apiVersion: str = 'argoproj.io/v1alpha1'
+    kind: str = 'Application'
     spec: AppSpec
 
 def generate_app_source(chart: str, version: str, values: HelmValues):
