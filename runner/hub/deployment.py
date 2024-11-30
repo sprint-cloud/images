@@ -88,7 +88,7 @@ class AppSource(HubModel):
     chart: str
     targetRevision: str
     repoURL: str = 'ghcr.io/sprint-cloud'
-    Helm: Helm
+    helm: Helm
 
 class AppDestination(HubModel):
     server: str = 'https://kubernetes.default.svc'
@@ -127,7 +127,7 @@ def generate_app_source(chart: str, version: str, values: HelmValues):
     return AppSource(
             chart=chart, 
             targetRevision=version, 
-            Helm=Helm(valuesObject=values))
+            helm=Helm(valuesObject=values))
 
 def generate_app(appname:str, source:AppSource, user:AppUser):
     meta = Metadata(name = appname, 
