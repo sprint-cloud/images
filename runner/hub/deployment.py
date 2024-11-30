@@ -122,8 +122,8 @@ def generate_app(appname:str, source:AppSource, user:AppUser):
     meta = Metadata(name = appname, 
                     namespace = "argocd",
                     labels = {
-                        'user': user.name
-                        }
+                        'pipeline': 'true'
+                    }
                     )
     namespace = f"app-{appname}"
     spec = AppSpec(source=source, 
