@@ -56,6 +56,7 @@ class IngressHost(HubModel):
     paths: list[IngressPath] = [IngressPath()]
 
 class AppIngress(HubModel):
+    enabled: bool = True
     className: str = "apps"
     hosts: list[IngressHost] = []
     tls: Optional[IngressTls]
