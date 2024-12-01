@@ -120,6 +120,9 @@ class ArgoApp(Manifest):
     def generate_namespace(self):
         meta = Metadata(
             name = f"app-{self.metadata.name}"
+            labels = {
+                'hub/app': self.Metadata.name
+            }
         )
         return Namespace(metadata=meta)
 
