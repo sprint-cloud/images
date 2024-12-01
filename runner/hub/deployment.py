@@ -68,7 +68,7 @@ def ingress_factory(val):
 
 class Resources(HubModel):
     cpu: str = '250m'
-    mem: str = '128Mi'
+    memory: str = '128Mi'
 
 class ResourceValues(HubModel):
     requests: Resources = Resources()
