@@ -1,9 +1,6 @@
-import yaml
-import time
-import os
 import unittest
 import hub.tools as tools
-from hub.deployment import Helm, HelmValues, AppUser, generate_app_source, generate_app, read_apps, generate_manifest
+from hub.deployment import HelmValues, AppUser, generate_app_source, generate_app, read_apps
 
 
 class TestCreateDir(unittest.TestCase):
