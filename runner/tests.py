@@ -35,7 +35,7 @@ class TestDeployment(unittest.TestCase):
             user = AppUser(email='user@example.com', name='username')
             values = HelmValues(user=user, domain="app.example.com")
             source = generate_app_source('wordpress', version='0.0.*', values=values)
-            app  = generate_app(appname=appname, source=source, user=user)
+            app  = generate_app(appname=appname, source=source, user=user, workflowName='test-workflow')
             ns = app.generate_namespace()
             ns.to_yaml(f"{out}/namespace.yaml")
             app.to_yaml(f"{out}/app.yaml")

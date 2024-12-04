@@ -113,11 +113,11 @@ def generate_app_source(chart: str, version: str, values: HelmValues):
             targetRevision=version, 
             helm=Helm(valuesObject=values))
 
-def generate_app(appname:str, source:AppSource, user:AppUser):
+def generate_app(appname:str, source:AppSource, user:AppUser, workflowName: str):
     meta = Metadata(name = appname, 
                     namespace = "argocd",
                     labels = {
-                        'pipeline': 'true'
+                        'workflow': workflowName
                     }
                     )
     namespace = f"app-{appname}"
