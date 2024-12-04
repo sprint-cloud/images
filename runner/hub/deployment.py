@@ -44,42 +44,23 @@ class AppUser(HubModel):
     email: str
     name: str
 
-class IngressTls(HubModel):
-    hosts: list[str]
-
-class IngressPath(HubModel):
-    path: str = "/"
-    pathType: str = "ImplementationSpecific"
-
-class IngressHost(HubModel):
-    host: str
-    paths: list[IngressPath] = [IngressPath()]
-
 class AppIngress(HubModel):
     enabled: bool = True
-    className: str = "apps"
-    hosts: list[IngressHost] = []
-    tls: list[IngressTls]
-        
-def ingress_factory(val):
-    tls = [IngressTls(hosts=[val['domain']])]
-    host = IngressHost(host=val['domain'])
-    return AppIngress(hosts=[host], tls=tls)
+    domain: str
+    ingressClass: str = 'apps'
 
 class Resources(HubModel):
-    cpu: str = '250m'
-    memory: str = '128Mi'
+    cpu: str
+    memory: str
 
 class ResourceValues(HubModel):
-    requests: Resources = Resources()
-    limits: Resources = Resources()
+    requests: Resources
+    limits: Resources
 
 class HelmValues(HubModel):
-    domain: str
     user: AppUser
-    ingress: AppIngress = Field(default_factory=ingress_factory)
-    resources: ResourceValues = ResourceValues()
-
+    ingress: Optional[AppIngress] = None
+    resources: Optional[ResourceValues] = None
 
 class Helm(HubModel):
     valuesObject: HelmValues
